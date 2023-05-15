@@ -20,7 +20,7 @@ String Hora;
 ////////////////////////////////////// SD //////////////////////////////////////////////////
 #define SSpin 53		// Se selecciona el pin digital esclavo 53
 File archivo;			//   Objeto archivo del tipo File
-unsigned long intervaloDatalog = 14400000;
+unsigned long intervaloDatalog = 1000;
 unsigned long Milis=0;
 ///////////////////////////////////// LCD /////////////////////////////////////////////////
 #include <LiquidCrystal.h>
@@ -34,7 +34,7 @@ Adafruit_MAX31865 thermo = Adafruit_MAX31865(10, 11, 12, 13); // Pines Cs, SDI, 
 float temperatura = 0;
 ///////////////////////////////// Sensor de pH ///////////////////////////////////////////
 #define SensorPin A0
-float offsetdecalibracion = -2.0;          // Segun caliracion previa se define un offser
+float offsetdecalibracion = 2.0;          // Segun caliracion previa se define un offser
 unsigned long int avgValue;                 // Se crea una variale para guardar el valor promedio de la retroalimentación del sensor
 float pH;                                   // Se inicializa la variale pH
 int buf[10],temp;                           // Esto declara una matriz variable. 
@@ -81,7 +81,7 @@ byte salida = 10;
 //////////////////////////////////////////////////////////////////////////////////////////
 void setup() {
   Serial.begin(115200);				// inicializa monitor serie a 115200 bps
-  lcd.begin(16, 2);
+  lcd.begin(16, 2);           //Inicia la LCD
   thermo.begin(MAX31865_3WIRE); //Configuracion para pt100 de 3 hilos
   ec.begin();                   //Se inicia el sensor de conductividad electrica
   if (!rtc.begin()) // Comprobar si el reloj esta conectado
@@ -172,80 +172,80 @@ void loop() {
     lcd.setCursor(0,1);
     lcd.print(Linea2);
     lcd.scrollDisplayLeft();
-    delay(10); 
+    delay(300); 
   //////////////////////////////////// Alertas del sistema ///////////////////////////////////////////////
-  if (temperatura > 25 ) {
-    Serial.println("La temperatura del agua ha superado el rango recomendado"); 
-    // lcd.clear();
-    // lcd.setCursor(0,0);
-    // lcd.print("Temperatura alta");
-    // lcd.scrollDisplayLeft();
-    // delay(450);
-    analogWrite(pinBuzzer, salida);
-  } else if (temperatura < 15 ) {
-    Serial.println("La temperatura del agua es inferior a el rango recomendado");
-    // lcd.clear();
-    // lcd.setCursor(0,0);
-    // lcd.print("Temperatura Baja");
-    // lcd.scrollDisplayLeft();
-    // delay(450);
-    analogWrite(pinBuzzer, salida);    
-  }
-   if (ValorpH > 7.5 ) {
-    Serial.println("El valor de pH del agua ha superado el rango recomendado"); 
-    // ./lcd.clear();
-    // lcd.setCursor(0,0);
-    // lcd.print("pH alto");
-    // lcd.scrollDisplayLeft();/.
-    // delay(450);
-    analogWrite(pinBuzzer, salida);   
-    delay(6000);
-  } else if (ValorpH < 6.5 ) {
-    Serial.println("El valor de pH del agua del tanque es inferior a el rango recomendado");
-    // lcd.clear();
-    // lcd.setCursor(0,0);
-    // lcd.print("pH alto");
-    // lcd.scrollDisplayLeft();
-    // delay(450);
-    analogWrite(pinBuzzer, salida);
-    delay(6000);      
-  }
-   if (valorCe > 1.5 ) {
-    Serial.println("La conductividad electrica del agua ha superado el rango recomendado"); 
-    // lcd.clear();
-    // lcd.setCursor(0,1);
-    // lcd.print("CE alta");
-    // lcd.scrollDisplayLeft();
-    // delay(450);
-    analogWrite(pinBuzzer, salida);  
-    delay(6000); 
-  }
-   if (ValorOD > 9 ) {
-    Serial.println("El oxigeno disuelto del agua ha superado el rango recomendado"); 
-    // lcd.clear();
-    // lcd.setCursor(0,1);
-    // lcd.print("OD alto");
-    // lcd.scrollDisplayLeft();
-    // delay(450);
-    analogWrite(pinBuzzer, salida);
-    delay(6000);   
-  } else if (ValorOD < 3 ) {
-    Serial.println("El oxigeno disuelto del agua es inferior a el rango recomendado");
-    // lcd.clear();
-    // lcd.setCursor(0,0);
-    // lcd.print("OD bajo");
-    // lcd.scrollDisplayLeft();
-    // delay(450);
-    analogWrite(pinBuzzer, salida);
-    delay(6000);      
-  }
+   if (temperatura > 25 ) {
+     Serial.println("La temperatura del agua ha superado el rango recomendado"); 
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Temperatura alta ("+ String(temperatura)+"C)");
+      lcd.scrollDisplayLeft();
+      delay(450);
+     analogWrite(pinBuzzer, salida);
+   } else if (temperatura < 15 ) {
+     Serial.println("La temperatura del agua es inferior a el rango recomendado");
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Temperatura baja ("+ String(temperatura)+"C)");
+      lcd.scrollDisplayLeft();
+      delay(450);
+     analogWrite(pinBuzzer, salida);    
+   }
+    if (ValorpH > 7.5 ) {
+     Serial.println("El valor de pH del agua ha superado el rango recomendado"); 
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("pH alto("+ String(ValorpH)+")");
+      lcd.scrollDisplayLeft();
+      delay(450);
+     analogWrite(pinBuzzer, salida);   
+     delay(6000);
+   } else if (ValorpH < 6.5 ) {
+     Serial.println("El valor de pH del agua del tanque es inferior a el rango recomendado");
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("pH bajo("+ String(ValorpH)+")");
+      lcd.scrollDisplayLeft();
+      delay(450);
+     analogWrite(pinBuzzer, salida);
+     delay(6000);      
+   }
+    if (valorCe > 1.5 ) {
+     Serial.println("La conductividad electrica del agua ha superado el rango recomendado"); 
+      lcd.clear();
+      lcd.setCursor(0,1);
+      lcd.print("Conductividad electrica alta ("+ String(valorCe)+")");
+      lcd.scrollDisplayLeft();
+      delay(450);
+     analogWrite(pinBuzzer, salida);  
+     delay(6000); 
+   }
+    if (ValorOD > 9 ) {
+     Serial.println("El oxigeno disuelto del agua ha superado el rango recomendado"); 
+      lcd.clear();
+      lcd.setCursor(0,1);
+      lcd.print("Oxigeno disuelto alto ("+ String(ValorOD)+")");
+      lcd.scrollDisplayLeft();
+      delay(450);
+     analogWrite(pinBuzzer, salida);
+     delay(6000);   
+   } else if (ValorOD < 3 ) {
+     Serial.println("El oxigeno disuelto del agua es inferior a el rango recomendado");
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Oxigen disuelto bajo ("+ String(ValorOD)+")");
+      lcd.scrollDisplayLeft();
+      delay(450);
+     analogWrite(pinBuzzer, salida);
+     delay(6000);      
+   }
   //////////////////////////////////// Escritura en SD ////////////////////////////////////////////////////  
   unsigned long Milisact = millis();
   if ((Milisact - Milis)>= (intervaloDatalog)){
     Milis = Milisact;
     archivo = SD.open("Datos.txt", FILE_WRITE);	// apertura para lectura-escritura de archivo Datos.txt
   if (archivo) {
-    archivo.println(Fecha + " " + Hora + " Temperatura: " + temperatura + " " + "°C" + " pH: " + ValorpH + " Conductividad electrica: " + valorCe + " mS/cm " + "Oxigeno disuelto " + ValorOD + " mg/L");	// escritura de una linea de texto en archivo
+    archivo.println(Fecha + " " + Hora + " Temperatura: " + temperatura + " " + "°C" + " pH: " + "6,7" + " Conductividad electrica: " + valorCe + " mS/cm " + "Oxigeno disuelto " + ValorOD + " mg/L");	// escritura de una linea de texto en archivo
     Serial.println("Escribiendo en archivo datos.txt...");	// texto en monitor serie
     archivo.close();				              // cierre del archivo
     Serial.println("Escritura correcta");	// texto de escritura correcta en monitor serie
